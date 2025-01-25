@@ -1,0 +1,56 @@
+﻿@page "/"
+
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<br />
+<br />
+
+<div><b>NetworkAccess (MauiProgram.cs):</b> @MauiApp3CheckNetworkAccess.Prop.InternetConnected.ToString()</div>
+
+<br />
+
+<div><b>NetworkAccess (Home.razor):</b> @MauiApp3CheckNetworkAccess.Prop.InternetConnected2.ToString()</div>
+
+<br />
+<br />
+
+<h3>
+    1. send notification to Android (appears in 15 seconds).<br />
+    2. close the app <br />
+    3. restart app via Android notification <br />
+</h3>
+
+<button @onclick="OnButtonClick">Klicken Sie mich</button>
+
+@if (IsSendNotification)
+{
+    <br />
+    <div>Notification sent, please close app now and wait for notification!</div>
+}
+
+@code{
+    bool IsSendNotification = false;
+
+    protected override void OnInitialized()
+    {
+        Prop.InternetConnected2 = Connectivity.NetworkAccess == NetworkAccess.Internet;
+    }
+
+    private void OnButtonClick()
+    {
+#if ANDROID
+        MauiApp3CheckNetworkAccess.Platforms.Android.LocalNotification LocalNotification = new();
+        LocalNotification.ScheduleNotification(
+                "id",
+                "This is just a test",
+                "Description",
+                DateTime.Now.AddSeconds(15)
+            );
+
+        IsSendNotification = true;
+#endif
+    }
+}
